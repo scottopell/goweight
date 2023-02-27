@@ -19,6 +19,7 @@ var (
 	jsonOutput = kingpin.Flag("json", "Output json").Short('j').Bool()
 	buildTags  = kingpin.Flag("tags", "Build tags").String()
 	packages   = kingpin.Arg("packages", "Packages to build").String()
+	buildWork  = kingpin.Flag("work", "Working dir (if building separately, can pass the go build working dir)").String()
 )
 
 func main() {
@@ -32,7 +33,12 @@ func main() {
 		weight.BuildCmd = append(weight.BuildCmd, *packages)
 	}
 
-	work := weight.BuildCurrent()
+	var work string
+	if *buildWork == "" {
+		work = weight.BuildCurrent()
+	} else {
+		work = *buildWork
+	}
 	modules := weight.Process(work)
 
 	if *jsonOutput {
